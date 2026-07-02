@@ -15,7 +15,9 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
     public User createUser(User user) {
-
+        if (user.getRole() == null) {
+            user.setRole("USER");
+        }
         user.setPassword(
                 passwordEncoder.encode(user.getPassword())
         );
@@ -47,5 +49,11 @@ public class UserService {
         user.setRole(updatedUser.getRole());
 
         return userRepository.save(user);
+    }
+    public User getUserByEmail(String email) {
+
+        return userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new RuntimeException("User Not Found"));
     }
 }

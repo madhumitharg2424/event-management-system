@@ -1,5 +1,6 @@
 package com.eventhub.event_management.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -16,6 +17,7 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @JsonIgnore
     @Column(nullable = false)
     private String password;
 
@@ -25,7 +27,12 @@ public class User {
     public User() {
     }
 
-    public User(Long id, String name, String email, String password, String role) {
+    public User(Long id,
+                String name,
+                String email,
+                String password,
+                String role) {
+
         this.id = id;
         this.name = name;
         this.email = email;

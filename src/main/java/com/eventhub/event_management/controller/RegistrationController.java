@@ -4,8 +4,10 @@ import com.eventhub.event_management.dto.RegistrationRequest;
 import com.eventhub.event_management.entity.Registration;
 import com.eventhub.event_management.service.RegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -23,8 +25,22 @@ public class RegistrationController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN','ORGANIZER')")
     public List<Registration> getAllRegistrations() {
+
         return registrationService.getAllRegistrations();
+    }
+
+    @GetMapping("/my")
+    @PreAuthorize("hasAnyRole('USER','ADMIN','ORGANIZER')")
+    public List<Registration> getMyRegistrations(
+            Principal principal) {
+
+        System.out.println("CURRENT USER = " + principal.getName());
+
+        return registrationService.getMyRegistrations(
+                principal.getName()
+        );
     }
 
     @DeleteMapping("/{id}")

@@ -21,7 +21,6 @@ public class AuthController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-
     @PostMapping("/register")
     public String register(
             @RequestBody RegisterRequest request) {
@@ -34,10 +33,14 @@ public class AuthController {
 
         user.setName(request.getName());
         user.setEmail(request.getEmail());
+
         user.setPassword(
-                passwordEncoder.encode(request.getPassword())
+                passwordEncoder.encode(
+                        request.getPassword()
+                )
         );
-        user.setRole(request.getRole());
+
+        user.setRole("USER");
 
         userRepository.save(user);
 
@@ -63,5 +66,13 @@ public class AuthController {
                 jwtService.generateToken(user.getEmail());
 
         return new LoginResponse(token);
+    }
+    @GetMapping("/test")
+    public String testToken(
+            @RequestHeader("Authorization") String header) {
+
+        String token = header.substring(7);
+
+        return jwtService.extractEmail(token);
     }
 }

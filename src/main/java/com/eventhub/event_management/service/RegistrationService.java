@@ -38,22 +38,37 @@ public class RegistrationService {
         registration.setUser(user);
         registration.setEvent(event);
         registration.setRegistrationDate(LocalDateTime.now());
+
         long currentRegistrations =
                 registrationRepository.countByEvent_Id(event.getId());
 
         System.out.println("Current registrations = " + currentRegistrations);
         System.out.println("Capacity = " + event.getCapacity());
+        if (
+                registrationRepository
+                        .existsByUser_IdAndEvent_Id(
+                                user.getId(),
+                                event.getId()
+                        )
+        ) {
 
-        if(currentRegistrations >= event.getCapacity()) {
+            throw new RuntimeException(
+                    "You have already registered for this event"
+            );
+        }
+        if (currentRegistrations >= event.getCapacity()) {
             throw new RuntimeException("Event Full");
         }
 
         return registrationRepository.save(registration);
     }
 
-
     public List<Registration> getAllRegistrations() {
         return registrationRepository.findAll();
+    }
+
+    public List<Registration> getMyRegistrations(String email) {
+        return registrationRepository.findByUser_Email(email);
     }
 
     public void deleteRegistration(Long id) {

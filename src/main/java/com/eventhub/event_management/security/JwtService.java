@@ -1,7 +1,8 @@
 package com.eventhub.event_management.security;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -22,10 +23,28 @@ public class JwtService {
                                 + 1000 * 60 * 60 * 24)
                 )
                 .signWith(
-                        io.jsonwebtoken.security.Keys.hmacShaKeyFor(
-                                SECRET_KEY.getBytes()
-                        )
+                        Keys.hmacShaKeyFor(SECRET_KEY.getBytes())
                 )
                 .compact();
+    }
+
+    public String extractEmail(String token) {
+
+        Claims claims = Jwts.parser()
+                .verifyWith(
+                        Keys.hmacShaKeyFor(SECRET_KEY.getBytes())
+                )
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+
+        return claims.getSubject();
+    }
+
+    public boolean isTokenValid(String token, String email) {
+
+        String extractedEmail = extractEmail(token);
+
+        return extractedEmail.equals(email);
     }
 }

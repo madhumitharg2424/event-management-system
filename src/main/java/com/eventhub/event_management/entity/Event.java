@@ -12,6 +12,10 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "organizer_id")
+    private User organizer;
+
     @Column(nullable=false)
     private String title;
 
@@ -53,6 +57,14 @@ public class Event {
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
+
+    public User getOrganizer() {
+        return organizer;
+    }
+
+    public void setOrganizer(User organizer) {
+        this.organizer = organizer;
+    }
 
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
